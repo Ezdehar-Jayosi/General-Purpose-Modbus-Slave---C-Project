@@ -1,0 +1,1 @@
+SlaveManager.o: ../SlaveManager.cpp
