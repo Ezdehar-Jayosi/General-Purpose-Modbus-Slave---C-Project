@@ -4,10 +4,10 @@ class Logic{
 
 public:
 	Logic(){}
-	void init(){
-
-	}
-	void start(){
-
-	}
+//	void init(){
+//
+//	}
+//	void start(){
+//
+//	}
 };

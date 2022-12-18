@@ -13,6 +13,7 @@ class TCP{
 	int opt = 1;
 	char buffer[1024]={0};
 	int addrlen = sizeof(address);
+	//*********************//
 	SlaveManager* slave_manager;
 
 public:
@@ -33,7 +34,7 @@ public:
 		}
 
 		address.sin_family = AF_INET;
-		address.sin_port = port;
+		address.sin_port = htons(port);
 		address.sin_addr.s_addr = inet_addr(IP);
 
 		int res = bind(server_fd, (struct sockaddr*)&address, sizeof(address));
@@ -53,11 +54,13 @@ public:
 
 		if((new_socket=accept(server_fd,(struct sockaddr*)&address,(socklen_t*)&addrlen))<0){
 			perror("accept");
+			std::cout << "fail to accept connection"<<std::endl;
 			exit(EXIT_FAILURE);
 		}
+		std::cout<< "before do while"<<std::endl;
 		do{
 			valread=read(new_socket,buffer,1024);
-			printf("%s\n",buffer);
+//			printf("%s\n",buffer);
 			std::string msg_str(buffer);
 			this->slave_manager->handleMSG(msg_str);
 
