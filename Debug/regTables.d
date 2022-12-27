@@ -1,0 +1,1 @@
+regTables.o: ../regTables.cpp

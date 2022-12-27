@@ -1,1 +1,2 @@
-SlaveManager.o: ../SlaveManager.cpp
+SlaveManager.o: ../SlaveManager.cpp ../regTables.cpp
+../regTables.cpp:

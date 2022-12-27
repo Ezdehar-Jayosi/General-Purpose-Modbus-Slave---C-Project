@@ -2,8 +2,15 @@
 #include <stdio.h>
 #include<string>
 #include <iostream>
+#include "regTables.cpp"
+
 
 class SlaveManager{
+	// Registers Tables
+	regTables* regT;
+	HoldingTable* holdT;
+	coilsTable* coilsT;
+	DiscreteInputs* discrtT;
 
 public:
 	SlaveManager(){}

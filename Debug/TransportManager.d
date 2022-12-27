@@ -1,5 +1,5 @@
 TransportManager.o: ../TransportManager.cpp ../TCP.cpp \
- ../SlaveManager.cpp \
+ ../SlaveManager.cpp ../regTables.cpp \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/writer.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stream.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/rapidjson.h \
@@ -34,6 +34,7 @@ TransportManager.o: ../TransportManager.cpp ../TCP.cpp \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stringbuffer.h
 ../TCP.cpp:
 ../SlaveManager.cpp:
+../regTables.cpp:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/writer.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stream.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/rapidjson.h:
