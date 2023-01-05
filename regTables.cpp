@@ -13,7 +13,10 @@ public:
 
 	}
 	T readReg(uint8_t key);
-	void writeToReg(uint8_t key, T value);
+	void writeToReg(uint8_t key, T value){
+		std::cout << "writing to reg" << std::endl;
+
+	}
 	~regTables();
 
 };
