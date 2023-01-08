@@ -7,14 +7,28 @@
 template <typename T> class regTables {
 
 public:
-	std::unordered_map<uint8_t, T> reg_table;
+	std::unordered_map<uint16_t, T> reg_table;
 
 	regTables(){
 
 	}
-	T readReg(uint8_t key);
+	std::pair<T,bool> readReg(uint8_t key){
+	//check if key exits in map
+		auto it = this->reg_table.find(key);
+		if(it != reg_table.end()){
+			return std::pair<T,bool>(it->second, true);
+		}
+		return std::pair<T,bool>(-1,false);
+	}
 	void writeToReg(uint8_t key, T value){
-		std::cout << "writing to reg" << std::endl;
+		//check if key exits in map
+		auto it = this->reg_table.find(key);
+		if(it != reg_table.end()){
+			this->reg_table.erase(it);
+		}
+
+		//add <key,value> to map
+		this->reg_table.insert(std::pair<uint8_t,T>(key,value));
 
 	}
 	~regTables();

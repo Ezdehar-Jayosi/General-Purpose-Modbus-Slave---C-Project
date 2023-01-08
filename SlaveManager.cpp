@@ -75,18 +75,23 @@ public:
 		Message *msgB = new Message(msg);
 
 		uint8_t funCode = msgB->getFuncCode();
+		std::pair<void, bool> res;
 		switch(funCode){
 		case Modbus::FunctionCode::READ_COIL:
-			std::cout << "TBD: READ COIL" << std::endl;
+			std::cout << "READ COIL" << std::endl;
+			res = this->coilsT->readReg(msgB->getStartAdd());
 			break;
 		case Modbus::FunctionCode::READ_DISCR_INPUT:
-			std::cout << "TBD: READ_DISCR_INPUT" << std::endl;
+			std::cout << "READ_DISCR_INPUT" << std::endl;
+			res = this->discrtT->readReg(msgB->getStartAdd());
 			break;
 		case Modbus::FunctionCode::READ_HOLD_REGISTER:
-			std::cout << "TBD: READ_HOLD_REGISTER" << std::endl;
+			std::cout << "READ_HOLD_REGISTER" << std::endl;
+			res = this->holdT->readReg(msgB->getStartAdd());
 			break;
 		case Modbus::FunctionCode::READ_INPUT_REGISTER:
-			std::cout << "TBD: READ_INPUT_REGISTER" << std::endl;
+			std::cout << "READ_INPUT_REGISTER" << std::endl;
+			res = this->regT->readReg(msgB->getStartAdd());
 			break;
 		case Modbus::FunctionCode::WRITE_COIL:  // 0x05
 			std::cout << "Writing coil" << std::endl;
