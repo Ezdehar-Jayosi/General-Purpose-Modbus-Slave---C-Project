@@ -3,6 +3,8 @@
 #include <iostream>
 #include "regTables.cpp"
 #include "Message.h"
+#include "ModbusError.h"
+
 class SlaveManager {
 	// Registers Tables
 	regTables<uint16_t> *regT;
@@ -57,7 +59,23 @@ class SlaveManager {
 		}
 
 	}
+	uint16_t maskReg(Message *msg){
+		std::cout << "mask reg" << std::endl;
+		uint16_t calc_res;
+		uint16_t Not_And_Mask= msg->getVal() ^ 0xFF;
+//		std::cout << "msg->getVal() = " << +msg->getVal() << std::endl;
+//		std::cout << "Not_And_Mask" << +Not_And_Mask<< std::endl;
 
+		uint16_t content_and_mask;
+		uint16_t Or_Mask = ((uint16_t) (msg->getBytesCount() << 8) | msg->getfirstelementofvector());
+//		std::cout << "Or_Mask"  << +Or_Mask<< std::endl;
+//		std::cout << "msg->getStartAdd() " << +msg->getStartAdd() << std::endl;
+		content_and_mask = msg->getStartAdd() & msg->getVal();
+
+		calc_res = ((content_and_mask & msg->getVal()) | (Or_Mask & Not_And_Mask));
+//		std::cout << "calc_res = " << +calc_res <<std::endl;
+		return calc_res;
+	}
 public:
 	SlaveManager() {
 		this->coilsT = new regTables<bool>;
@@ -75,7 +93,8 @@ public:
 		Message *msgB = new Message(msg);
 
 		uint8_t funCode = msgB->getFuncCode();
-		std::pair<void, bool> res;
+		std::pair<uint, bool> res;
+		ModbusError err;
 		switch(funCode){
 		case Modbus::FunctionCode::READ_COIL:
 			std::cout << "READ COIL" << std::endl;
@@ -130,17 +149,20 @@ public:
 		case Modbus::FunctionCode::WRITE_FILE_RECORD:
 			std::cout << "TBD: WRITE_FILE_RECORD" << std::endl;
 			break;
-		case Modbus::FunctionCode::MASK_WRITE_REGISTER:
-			std::cout << "TBD: MASK_WRITE_REGISTER" << std::endl;
+		case Modbus::FunctionCode::MASK_WRITE_REGISTER: //0x16
+			std::cout << "MASK_WRITE_REGISTER" << std::endl;
+			this->holdT->writeToReg(msgB->getStartAdd(),this->maskReg(msgB));
 			break;
 		case Modbus::FunctionCode::R_W_MULT_REGISTERS:
 			std::cout << "TBD: R_W_MULT_REGISTERS" << std::endl;
 			break;
 		case Modbus::FunctionCode::READ_FIFO_QUEUE:
 			std::cout << "TBD: READ_FIFO_QUEUE" << std::endl;
+
 			break;
 //		default:
-//			return ModbusError::getText(Modbus::Error::ILLEGAL_FUNCTION);
+//			err = ModbusError(Modbus::Error::ILLEGAL_FUNCTION);
+//			return err();
 		}
 //		return ModbusError::getText(Modbus::Error::SUCCESS);
 

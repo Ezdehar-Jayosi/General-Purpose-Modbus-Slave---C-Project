@@ -58,6 +58,7 @@ class Message {
 	uint16_t val;
 	uint8_t byte_count;
 	std::vector<uint8_t> output_val;
+//	std::vector<uint8_t> bytes_vec;
 
 	static void tokenize(std::string const &str, const char delim,
 			std::vector<std::string> &out) {
@@ -83,6 +84,12 @@ public:
 	}
 	std::vector<uint8_t> getOutPut() {
 		return this->output_val;
+	}
+	uint8_t getBytesCount(){
+		return byte_count;
+	}
+	uint8_t getfirstelementofvector(){
+		return output_val[0];
 	}
 
 };

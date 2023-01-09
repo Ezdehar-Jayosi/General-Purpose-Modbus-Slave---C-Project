@@ -1,5 +1,6 @@
 main.o: ../main.cpp ../TransportManager.cpp ../TCP.cpp \
  ../SlaveManager.cpp ../regTables.cpp ../Message.h ../ModbusTypeDefs.h \
+ ../ModbusError.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/writer.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stream.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/rapidjson.h \
@@ -39,6 +40,7 @@ main.o: ../main.cpp ../TransportManager.cpp ../TCP.cpp \
 ../regTables.cpp:
 ../Message.h:
 ../ModbusTypeDefs.h:
+../ModbusError.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/writer.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stream.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/rapidjson.h:
