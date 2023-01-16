@@ -5,10 +5,8 @@
 
 
 template <typename T> class regTables {
-
-public:
 	std::unordered_map<uint16_t, T> reg_table;
-
+public:
 	regTables(){
 
 	}
@@ -16,7 +14,7 @@ public:
 	//check if key exits in map
 		auto it = this->reg_table.find(key);
 		if(it != reg_table.end()){
-			return std::pair<T,bool>(it->second, true);
+			return std::pair<T,bool>(it->second, true); // TODO: check if we should return 0x0 if a reg is not found in the map
 		}
 		return std::pair<T,bool>(-1,false);
 	}
@@ -34,51 +32,4 @@ public:
 	~regTables();
 
 };
-
-//class DiscreteInputs: public <bool> regTables{
-//
-//public:
-//	std::byte readReg(uint8_t key) {
-//		return this->reg_table[key];
-//	}
-//	void writeToReg(uint8_t key, std::byte value) {
-//		this->reg_table[key] = value;
-//	}
-//};
-//
-//
-//class coilsTable : public regTables{
-//
-//public:
-//	std::byte readReg(uint8_t key) {
-//		return this->reg_table[key];
-//	}
-//	void writeToReg(uint8_t key, std::byte value) {
-//		this->reg_table[key] = value;
-//	}
-//};
-//
-//
-//class InputRegister: public regTables{
-//
-//public:
-//	std::byte readReg(uint8_t key) {
-//		return this->reg_table[key];
-//	}
-//	void writeToReg(uint8_t key, std::byte value) {
-//		this->reg_table[key] = value;
-//	}
-//};
-//
-//
-//class HoldingTable : public regTables{
-//
-//public:
-//	std::byte readReg(std::byte key) {
-//		return this->reg_table[key];
-//	}
-//	void writeToReg(std::byte key, std::byte value) {
-//		this->reg_table[key] = value;
-//	}
-//};
 

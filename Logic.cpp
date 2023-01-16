@@ -1,9 +1,13 @@
 
 
 class Logic{
-
+	SlaveManager *slave_manager;
 public:
-	Logic(){}
+	Logic(SlaveManager *slave_manager){
+		this->slave_manager=slave_manager;
+	}
+
+
 //	void init(){
 //
 //	}
