@@ -1,6 +1,5 @@
 
 #include "ModbusError.h"
-#include "Message.h"
 
 ModbusError check_multi_coils_req(Message* msg){
 

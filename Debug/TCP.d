@@ -1,7 +1,8 @@
-TCP.o: ../TCP.cpp ../SlaveManager.cpp ../regTables.cpp ../Message.h \
- ../ModbusTypeDefs.h ../ModbusError.h
-../SlaveManager.cpp:
-../regTables.cpp:
+TCP.o: ../TCP.cpp ../SlaveManager.h ../Message.h ../ModbusTypeDefs.h \
+ ../utilities.h ../ModbusError.h ../regTables.cpp
+../SlaveManager.h:
 ../Message.h:
 ../ModbusTypeDefs.h:
+../utilities.h:
 ../ModbusError.h:
+../regTables.cpp:

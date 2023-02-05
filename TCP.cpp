@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <string>
-#include "SlaveManager.cpp"
+#include "SlaveManager.h"
 
 class TCP {
 	int server_fd, new_socket, valread;
