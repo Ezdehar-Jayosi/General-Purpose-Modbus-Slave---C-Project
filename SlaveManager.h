@@ -14,9 +14,7 @@
 #include "Message.h"
 #include "ModbusError.h"
 
-
 #include "regTables.cpp"
-
 typedef void (*CallBack)(uint16_t, uint16_t);
 
 class SlaveManager {
@@ -81,7 +79,7 @@ class SlaveManager {
 			table->writeToReg(add, val_to_write);
 			i += 1;
 			j += 2;
-			add += 0x10; // TODO: check if we should add 0x01 or 0x10
+			add += 0x10;
 			//std::cout  << +quantity_of_reg << ' ' << +add << std::endl;
 		}
 
@@ -126,15 +124,26 @@ class SlaveManager {
 		while (i < (int) quantity_of_reg) {
 			reg_vals->push_back(table->readReg(add).first);
 			i += 1;
-			add += 0x1; // TODO: check if we should add 0x01 or 0x10
+			add += 0x1;
 		}
 	}
-
+	void callBackFunction(FunctionCode table_type, uint16_t add, uint16_t val) {
+		if (table_type == FunctionCode::WRITE_HOLD_REGISTER) {
+			if (this->cbf_map_holdT.find(add) != this->cbf_map_holdT.end()) {
+				this->cbf_map_holdT[add](add, val);
+			}
+		} else if (table_type == FunctionCode::WRITE_COIL) {
+			if (this->cbf_map_coil.find(add) != this->cbf_map_coil.end()) {
+				this->cbf_map_coil[add](add, val);
+			}
+		}
+	}
 public:
 	SlaveManager();
+	void init(std::unordered_map<FunctionCode, std::vector<uint16_t>> tables_range);
 	// set call back functions
-	void setCallBackFunc(FunctionCode table_type, CallBack handler, uint16_t regadd);
-
+	void setCallBackFunc(FunctionCode table_type, CallBack handler,
+			uint16_t regadd);
 
 	ModbusError handleMSG(std::string msg);
 

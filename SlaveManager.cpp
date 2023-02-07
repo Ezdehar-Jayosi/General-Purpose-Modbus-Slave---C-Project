@@ -2,14 +2,33 @@
 
 #include "handleError.h"
 
-SlaveManager::SlaveManager() {
-	this->coilsT = new regTables<bool>;
-	this->discrtT = new regTables<bool>;
-	this->holdT = new regTables<uint16_t>;
-	this->regT = new regTables<uint16_t>;
+SlaveManager::SlaveManager(){}
+void SlaveManager::init(
+		std::unordered_map<FunctionCode, std::vector<uint16_t>> tables_range) {
+	for (auto &trange : tables_range) {
+		switch (trange.first) {
+		case FunctionCode::READ_COIL:
+			this->coilsT = new regTables<bool>(trange.second[0],
+					trange.second[1]);
+			break;
+		case FunctionCode::READ_DISCR_INPUT:
+			this->discrtT = new regTables<bool>(trange.second[0],
+					trange.second[1]);
+			break;
+		case FunctionCode::READ_INPUT_REGISTER:
+			this->regT = new regTables<uint16_t>(trange.second[0],
+					trange.second[1]);
+			break;
+		case FunctionCode::READ_HOLD_REGISTER:
+			this->holdT = new regTables<uint16_t>(trange.second[0],
+					trange.second[1]);
+			break;
+		}
+	}
 
 }
-void SlaveManager::setCallBackFunc(FunctionCode table_type, CallBack handler, uint16_t regadd) {
+void SlaveManager::setCallBackFunc(FunctionCode table_type, CallBack handler,
+		uint16_t regadd) {
 	if (table_type == FunctionCode::READ_HOLD_REGISTER) {
 		this->cbf_map_holdT.insert(
 				std::pair<uint16_t, CallBack>(regadd, handler));
@@ -27,8 +46,8 @@ void SlaveManager::setCallBackFunc(FunctionCode table_type, CallBack handler, ui
 	}
 }
 
-ModbusError SlaveManager::handleMSG(std::string msg) { //TODO: RETURN TYPE IS RES, WILL DEFINE LATER
-	// TODO: change argument type, argument is of type ByteArray
+ModbusError SlaveManager::handleMSG(std::string msg) {
+
 
 	Message *msgB = new Message(msg);
 
@@ -61,14 +80,25 @@ ModbusError SlaveManager::handleMSG(std::string msg) { //TODO: RETURN TYPE IS RE
 		this->readbytes(msgB, &bytes_read, true);
 		break;
 	case Modbus::FunctionCode::WRITE_COIL:  // 0x05
+
+
+
 		std::cout << "Writing coil" << std::endl;
 		check_write_coil_req(msgB);
 		this->coilsT->writeToReg(msgB->getStartAdd(), msgB->getVal());
+
+		// call the call back function
+		callBackFunction(FunctionCode::WRITE_COIL, msgB->getStartAdd(),
+				msgB->getVal());
 		break;
 	case Modbus::FunctionCode::WRITE_HOLD_REGISTER:  // 0x06
 		std::cout << "Write hold" << std::endl;
 		check_write_hold_req(msgB);
 		this->holdT->writeToReg(msgB->getStartAdd(), msgB->getVal());
+
+		// call the call back function
+		callBackFunction(FunctionCode::WRITE_HOLD_REGISTER, msgB->getStartAdd(),
+				msgB->getVal());
 		break;
 	case Modbus::FunctionCode::READ_EXCEPTION_SERIAL:
 		std::cout << "TBD: READ_EXCEPTION_SERIAL" << std::endl;
@@ -105,8 +135,9 @@ ModbusError SlaveManager::handleMSG(std::string msg) { //TODO: RETURN TYPE IS RE
 		std::cout << "MASK_WRITE_REGISTER" << std::endl;
 //			uint16_t  or_mask = ((uint16_t) (msgB->getBytesCount() << 8)
 //					| msgB->getfirstelementofvector());
-		check_mask_writeReg_req(msgB, ((uint16_t) (msgB->getBytesCount() << 8)
-				| msgB->getfirstelementofvector()));
+		check_mask_writeReg_req(msgB,
+				((uint16_t) (msgB->getBytesCount() << 8)
+						| msgB->getfirstelementofvector()));
 		this->holdT->writeToReg(msgB->getStartAdd(), this->maskReg(msgB));
 		break;
 	case Modbus::FunctionCode::R_W_MULT_REGISTERS:
@@ -126,5 +157,4 @@ ModbusError SlaveManager::handleMSG(std::string msg) { //TODO: RETURN TYPE IS RE
 	return err;
 
 }
-
 

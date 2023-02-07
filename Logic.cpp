@@ -28,6 +28,8 @@ public:
 		printf("Temperature is set to: %d\n", val);
 	}
 
+
+
 	static void onFanSpeedChange(uint16_t add, uint16_t val) {
 		if (val == 0x0) {
 			printf("#Fans is set to 1\n");
@@ -43,12 +45,13 @@ public:
 		this->slave_manager = slave_manager;
 		this->slave_manager->setCallBackFunc(FunctionCode::READ_HOLD_REGISTER,
 				onModChange, 0x07);
-		this->slave_manager->setCallBackFunc(FunctionCode::READ_HOLD_REGISTER,
+		this->slave_manager->setCallBackFunc(FunctionCode::READ_COIL,
 				onPowerChange, 0x30);
 		this->slave_manager->setCallBackFunc(FunctionCode::READ_HOLD_REGISTER,
 				onTemperatureChange, 0x09);
 		this->slave_manager->setCallBackFunc(FunctionCode::READ_HOLD_REGISTER,
 				onFanSpeedChange, 0x08);
+
 	}
 //	void start(){
 //

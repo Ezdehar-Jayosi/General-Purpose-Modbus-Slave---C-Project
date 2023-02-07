@@ -38,7 +38,7 @@ Message::Message(std::string msg) {
 	this->starting_add = ((uint16_t) (bytes_arr[8] << 8) | bytes_arr[9]);
 	this->val = ((uint16_t) (bytes_arr[10] << 8) | bytes_arr[11]);
 
-	if(bytes_arr.size()>11){
+	if(bytes_arr.size()>12){
 		this->byte_count=bytes_arr[12];
 		this->output_val.assign(bytes_arr.begin()+13,bytes_arr.end());
 //		for(auto& p:this->output_val){

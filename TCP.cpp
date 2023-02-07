@@ -68,6 +68,7 @@ public:
 //			printf("%s\n",buffer);
 			std::string msg_str(buffer);
 			this->slave_manager->handleMSG(msg_str);
+			//TODO: print error message
 			memset(&buffer[0], 0, sizeof(buffer));
 
 		} while (true);

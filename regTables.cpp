@@ -6,8 +6,12 @@
 
 template <typename T> class regTables {
 	std::unordered_map<uint16_t, T> reg_table;
+	uint16_t start_add;
+	uint16_t last_add;
 public:
-	regTables(){
+	regTables(uint16_t start_add, uint16_t last_add){
+		this->start_add=start_add;
+		this->last_add=last_add;
 
 	}
 	std::pair<T,bool> readReg(uint8_t key){
