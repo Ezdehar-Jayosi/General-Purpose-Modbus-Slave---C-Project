@@ -1,8 +1,13 @@
 #include "SlaveManager.h"
 
 #include "handleError.h"
-
-SlaveManager::SlaveManager(){}
+#include<unistd.h>
+SlaveManager::SlaveManager(){
+	this->coilT_lock = new rw_lock();
+	this->discrt_lock = new rw_lock();
+	this->holdT_lock = new rw_lock();
+	this->regT_lock = new rw_lock();
+}
 void SlaveManager::init(
 		std::unordered_map<FunctionCode, std::vector<uint16_t>> tables_range) {
 	for (auto &trange : tables_range) {
@@ -30,25 +35,18 @@ void SlaveManager::init(
 void SlaveManager::setCallBackFunc(FunctionCode table_type, CallBack handler,
 		uint16_t regadd) {
 	if (table_type == FunctionCode::READ_HOLD_REGISTER) {
-		this->cbf_map_holdT.insert(
-				std::pair<uint16_t, CallBack>(regadd, handler));
+		this->holdT->setCallBackFunc(handler, regadd);
 
 	} else if (table_type == FunctionCode::READ_INPUT_REGISTER) {
-		this->cbf_map_regT.insert(
-				std::pair<uint16_t, CallBack>(regadd, handler));
+		this->regT->setCallBackFunc(handler, regadd);
 	} else if (table_type == FunctionCode::READ_COIL) {
-		this->cbf_map_coil.insert(
-				std::pair<uint16_t, CallBack>(regadd, handler));
-
-	} else if (table_type == FunctionCode::READ_DISCR_INPUT) {
-		this->cbf_map_discrt.insert(
-				std::pair<uint16_t, CallBack>(regadd, handler));
+		this->coilsT->setCallBackFunc(handler, regadd);
 	}
 }
 
 ModbusError SlaveManager::handleMSG(std::string msg) {
 
-
+//TODO: add mutex when writing to tables;
 	Message *msgB = new Message(msg);
 
 	uint8_t funCode = msgB->getFuncCode();
@@ -62,43 +60,45 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 	case Modbus::FunctionCode::READ_COIL:
 		std::cout << "READ COIL" << std::endl;
 		err = check_read_coil_req(msgB);
+		this->coilT_lock->r_lock();
 		this->readbits(msgB, &bits_read, true);
+		this->coilT_lock->r_unlock();
 		break;
 	case Modbus::FunctionCode::READ_DISCR_INPUT:
 		std::cout << "READ_DISCR_INPUT" << std::endl;
 		err = check_read_discrt_req(msgB);
+		this->discrt_lock->r_lock();
 		this->readbits(msgB, &bits_read, false);
+		this->discrt_lock->r_unlock();
 		break;
 	case Modbus::FunctionCode::READ_HOLD_REGISTER:
 		std::cout << "READ_HOLD_REGISTER" << std::endl;
 		err = check_read_hold_req(msgB);
+		this->holdT_lock->r_lock();
 		this->readbytes(msgB, &bytes_read, false);
+		this->holdT_lock->r_unlock();
 		break;
 	case Modbus::FunctionCode::READ_INPUT_REGISTER:
 		std::cout << "READ_INPUT_REGISTER" << std::endl;
 		err = check_read_inputReg_req(msgB);
+		this->regT_lock->r_lock();
 		this->readbytes(msgB, &bytes_read, true);
+		this->regT_lock->r_unlock();
 		break;
 	case Modbus::FunctionCode::WRITE_COIL:  // 0x05
 
-
-
 		std::cout << "Writing coil" << std::endl;
 		check_write_coil_req(msgB);
+		this->coilT_lock->w_lock();
 		this->coilsT->writeToReg(msgB->getStartAdd(), msgB->getVal());
-
-		// call the call back function
-		callBackFunction(FunctionCode::WRITE_COIL, msgB->getStartAdd(),
-				msgB->getVal());
+		this->coilT_lock->w_unlock();
 		break;
 	case Modbus::FunctionCode::WRITE_HOLD_REGISTER:  // 0x06
 		std::cout << "Write hold" << std::endl;
 		check_write_hold_req(msgB);
+		this->holdT_lock->w_lock();
 		this->holdT->writeToReg(msgB->getStartAdd(), msgB->getVal());
-
-		// call the call back function
-		callBackFunction(FunctionCode::WRITE_HOLD_REGISTER, msgB->getStartAdd(),
-				msgB->getVal());
+		this->holdT_lock->w_unlock();
 		break;
 	case Modbus::FunctionCode::READ_EXCEPTION_SERIAL:
 		std::cout << "TBD: READ_EXCEPTION_SERIAL" << std::endl;
@@ -115,12 +115,17 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 	case Modbus::FunctionCode::WRITE_MULT_COILS: //0x0F
 		std::cout << "Write Mult Coils" << std::endl;
 		err = check_multi_coils_req(msgB);
+		this->coilT_lock->w_lock();
+//		sleep(30);
 		this->writeBits(msgB, true);
+		this->coilT_lock->w_unlock();
 		break;
 	case Modbus::FunctionCode::WRITE_MULT_REGISTERS: //0x10
 		std::cout << "WRITE_MULT_REGISTERS" << std::endl;
 		check_write_multiReg_req(msgB);
+		this->regT_lock->w_lock();
 		this->writeBytes(msgB, true);
+		this->regT_lock->w_unlock();
 		break;
 	case Modbus::FunctionCode::REPORT_SERVER_ID_SERIAL:
 		std::cout << "TBD: REPORT_SERVER_ID_SERIAL" << std::endl;
@@ -138,7 +143,9 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		check_mask_writeReg_req(msgB,
 				((uint16_t) (msgB->getBytesCount() << 8)
 						| msgB->getfirstelementofvector()));
+		this->holdT_lock->w_lock();
 		this->holdT->writeToReg(msgB->getStartAdd(), this->maskReg(msgB));
+		this->holdT_lock->w_unlock();
 		break;
 	case Modbus::FunctionCode::R_W_MULT_REGISTERS:
 		std::cout << "TBD: R_W_MULT_REGISTERS" << std::endl;

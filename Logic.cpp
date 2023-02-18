@@ -1,8 +1,13 @@
 #include "SlaveManager.h"
+
+//TODO: thread that changes temprature every 5 seconds (+-1)
+
 class Logic {
 	SlaveManager *slave_manager;
+	int temp;
 public:
 	Logic() {
+		temp=20;
 	}
 
 	static void onModChange(uint16_t add, uint16_t val) {

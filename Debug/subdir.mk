@@ -10,7 +10,8 @@ CPP_SRCS += \
 ../TCP.cpp \
 ../TransportManager.cpp \
 ../main.cpp \
-../regTables.cpp 
+../regTables.cpp \
+../rw_lock.cpp 
 
 CPP_DEPS += \
 ./Logic.d \
@@ -19,7 +20,8 @@ CPP_DEPS += \
 ./TCP.d \
 ./TransportManager.d \
 ./main.d \
-./regTables.d 
+./regTables.d \
+./rw_lock.d 
 
 OBJS += \
 ./Logic.o \
@@ -28,7 +30,8 @@ OBJS += \
 ./TCP.o \
 ./TransportManager.o \
 ./main.o \
-./regTables.o 
+./regTables.o \
+./rw_lock.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -43,7 +46,7 @@ OBJS += \
 clean: clean--2e-
 
 clean--2e-:
-	-$(RM) ./Logic.d ./Logic.o ./Message.d ./Message.o ./SlaveManager.d ./SlaveManager.o ./TCP.d ./TCP.o ./TransportManager.d ./TransportManager.o ./main.d ./main.o ./regTables.d ./regTables.o
+	-$(RM) ./Logic.d ./Logic.o ./Message.d ./Message.o ./SlaveManager.d ./SlaveManager.o ./TCP.d ./TCP.o ./TransportManager.d ./TransportManager.o ./main.d ./main.o ./regTables.d ./regTables.o ./rw_lock.d ./rw_lock.o
 
 .PHONY: clean--2e-
 

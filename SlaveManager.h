@@ -13,25 +13,23 @@
 #include <iostream>
 #include "Message.h"
 #include "ModbusError.h"
-
+#include <mutex>
 #include "regTables.cpp"
-typedef void (*CallBack)(uint16_t, uint16_t);
+#include "rw_lock.cpp"
 
 class SlaveManager {
 	// Registers Tables
-
+//	static SlaveManager* instance;
 	regTables<uint16_t> *regT;
 	regTables<uint16_t> *holdT;
 	regTables<bool> *coilsT;
 	regTables<bool> *discrtT;
 
-	//call back functions maps
-	std::unordered_map<uint16_t, CallBack> cbf_map_coil;
-	std::unordered_map<uint16_t, CallBack> cbf_map_discrt;
-	std::unordered_map<uint16_t, CallBack> cbf_map_regT;
-	std::unordered_map<uint16_t, CallBack> cbf_map_holdT;
+//// mutexes
+	rw_lock *regT_lock, *holdT_lock, *coilT_lock, *discrt_lock;
 
 	// helper messages
+
 	void writeBits(Message *msg, bool tFlag) {
 		std::cout << "Writebits func" << std::endl;
 		std::vector<bool> bits;
@@ -110,7 +108,7 @@ class SlaveManager {
 		uint16_t add = msg->getStartAdd();
 		regTables<bool> *table = (tFlag == true) ? coilsT : discrtT;
 		while (i < (int) quantity_of_reg) {
-			reg_vals->push_back(table->readReg(add).first);
+			reg_vals->push_back(table->readReg(add));
 			i += 1;
 			add += 0x1;
 		}
@@ -122,22 +120,13 @@ class SlaveManager {
 		uint16_t add = msg->getStartAdd();
 		regTables<uint16_t> *table = (tFlag == true) ? regT : holdT;
 		while (i < (int) quantity_of_reg) {
-			reg_vals->push_back(table->readReg(add).first);
+			reg_vals->push_back(table->readReg(add));
 			i += 1;
 			add += 0x1;
 		}
 	}
-	void callBackFunction(FunctionCode table_type, uint16_t add, uint16_t val) {
-		if (table_type == FunctionCode::WRITE_HOLD_REGISTER) {
-			if (this->cbf_map_holdT.find(add) != this->cbf_map_holdT.end()) {
-				this->cbf_map_holdT[add](add, val);
-			}
-		} else if (table_type == FunctionCode::WRITE_COIL) {
-			if (this->cbf_map_coil.find(add) != this->cbf_map_coil.end()) {
-				this->cbf_map_coil[add](add, val);
-			}
-		}
-	}
+
+
 public:
 	SlaveManager();
 	void init(std::unordered_map<FunctionCode, std::vector<uint16_t>> tables_range);

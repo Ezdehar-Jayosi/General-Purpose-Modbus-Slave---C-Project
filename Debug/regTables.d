@@ -1,1 +1,2 @@
-regTables.o: ../regTables.cpp
+regTables.o: ../regTables.cpp ../ModbusTypeDefs.h
+../ModbusTypeDefs.h:
