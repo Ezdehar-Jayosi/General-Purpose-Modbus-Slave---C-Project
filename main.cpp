@@ -8,7 +8,6 @@ int main(int argc, char **argv) {
 
 	transport->init(slave_manager);
 	my_logic->init(slave_manager);
-	//	my_logic->start();
 	transport->start();
 
 	return 0;

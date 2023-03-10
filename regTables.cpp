@@ -16,6 +16,12 @@ public:
 		this->last_add = last_add;
 
 	}
+	bool addInRange(uint16_t add) {
+		if (add < start_add || add > last_add) {
+			return false;
+		}
+		return true;
+	}
 	T readReg(uint8_t key) {
 		//check if key exits in map
 		auto it = this->reg_table.find(key);
@@ -47,14 +53,13 @@ public:
 
 		auto cbf_it = this->cbf_map_table.find(key);
 		if (cbf_it != cbf_map_table.end()) {
-			this->cbf_map_table[key](key,value);
+			this->cbf_map_table[key](key, value);
 		}
 
-
 	}
-	void setCallBackFunc(CallBack handler,uint16_t regadd){
+	void setCallBackFunc(CallBack handler, uint16_t regadd) {
 		this->cbf_map_table.insert(
-						std::pair<uint16_t, CallBack>(regadd, handler));
+				std::pair<uint16_t, CallBack>(regadd, handler));
 	}
 	~regTables();
 

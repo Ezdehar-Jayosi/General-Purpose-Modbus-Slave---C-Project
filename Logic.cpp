@@ -1,15 +1,33 @@
 #include "SlaveManager.h"
 
-//TODO: thread that changes temprature every 5 seconds (+-1)
+//TODO: thread that changes temperature every 5 seconds (+-1)
 
 class Logic {
 	SlaveManager *slave_manager;
 	int temp;
+	std::thread* tmp_thrd;
 public:
 	Logic() {
 		temp=20;
+
 	}
 
+   void setTempreture(uint16_t add){
+
+		while(true){
+		int sign = rand() % 2 + 1;
+		if(sign==1){
+			this->temp-=1;
+		}else{
+			this->temp+=1;
+		}
+		std::cout << " sign = " << sign << " temp = " << this->temp << std::endl;
+		slave_manager->setTempreture(add, this->temp);
+			sleep(5);
+		}
+
+
+	}
 	static void onModChange(uint16_t add, uint16_t val) {
 		if (val == 0x0) {
 			printf("Cold Mode ON \n");
@@ -56,6 +74,9 @@ public:
 				onTemperatureChange, 0x09);
 		this->slave_manager->setCallBackFunc(FunctionCode::READ_HOLD_REGISTER,
 				onFanSpeedChange, 0x08);
+		tmp_thrd  = new std::thread([=] {
+					setTempreture(0x09);
+				});
 
 	}
 //	void start(){

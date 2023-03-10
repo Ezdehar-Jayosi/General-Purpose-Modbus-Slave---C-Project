@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include<string>
 #include <iostream>
+#include <thread>
+#include <unistd.h>
+
 #include "Message.h"
 #include "ModbusError.h"
 #include <mutex>
@@ -135,6 +138,8 @@ public:
 			uint16_t regadd);
 
 	ModbusError handleMSG(std::string msg);
+
+	void setTempreture(uint16_t reg,uint16_t tmp);
 
 };
 
