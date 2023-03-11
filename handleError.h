@@ -36,10 +36,10 @@ ModbusError check_write_hold_req(Message *msg) {
 }
 
 ModbusError check_write_multiReg_req(Message *msg) {
-	uint8_t rem = msg->getVal() % 2;
-	uint8_t byte_c =
-			(rem > 0) ? (msg->getVal() >> 3) + 1 : (msg->getVal() >> 3);
-	if ((msg->getVal() < 0x0001 || msg->getVal() > 0x07B0)
+	//uint8_t rem = msg->getVal() % 2;
+	uint8_t byte_c =msg->getVal() * 2;
+			//(rem > 0) ? (msg->getVal() >> 3) + 1 : (msg->getVal() >> 3);
+	if ((msg->getVal() < 0x0001 || msg->getVal() > 0x007B)
 			|| (msg->getBytesCount() != byte_c)) {
 		return ModbusError(Modbus::Error::ILLEGAL_DATA_VALUE);
 	} else if ((msg->getStartAdd() < 0x0000 || msg->getStartAdd() > 0xFFFF)

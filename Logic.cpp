@@ -21,7 +21,7 @@ public:
 		}else{
 			this->temp+=1;
 		}
-		std::cout << " sign = " << sign << " temp = " << this->temp << std::endl;
+		//std::cout << " sign = " << sign << " temp = " << this->temp << std::endl;
 		slave_manager->setTempreture(add, this->temp);
 			sleep(5);
 		}

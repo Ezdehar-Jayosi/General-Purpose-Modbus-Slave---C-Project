@@ -34,12 +34,12 @@ class SlaveManager {
 	// helper messages
 
 	void writeBits(Message *msg, bool tFlag) {
-		std::cout << "Writebits func" << std::endl;
+		//std::cout << "Writebits func" << std::endl;
 		std::vector<bool> bits;
 		// convert byte to bits
 		for (uint8_t o : msg->getOutPut()) {
 			//convert uint8_t to binary
-			std::cout << +o << " ";
+			//std::cout << +o << " ";
 			uint8_t tmp_v = o;
 			while (tmp_v != 0x0) {
 				if ((tmp_v & 0x1) == 1) {
@@ -86,7 +86,7 @@ class SlaveManager {
 
 	}
 	uint16_t maskReg(Message *msg) {
-		std::cout << "mask reg" << std::endl;
+		//std::cout << "mask reg" << std::endl;
 		uint16_t calc_res;
 		uint16_t Not_And_Mask = msg->getVal() ^ 0xFF;
 //		std::cout << "msg->getVal() = " << +msg->getVal() << std::endl;
@@ -105,15 +105,35 @@ class SlaveManager {
 		return calc_res;
 	}
 
-	void readbits(Message *msg, std::vector<bool> *reg_vals, bool tFlag) {
+	void readbits(Message *msg, std::vector<std::string> *reg_vals, bool tFlag) {
 		uint8_t quantity_of_reg = msg->getVal();
 		int i = 0;
 		uint16_t add = msg->getStartAdd();
 		regTables<bool> *table = (tFlag == true) ? coilsT : discrtT;
+		uint8_t n = 0x00;
+		int j=0;
 		while (i < (int) quantity_of_reg) {
-			reg_vals->push_back(table->readReg(add));
+			//reg_vals->push_back(table->readReg(add));
+			if(j==8){
+				reg_vals->push_back(std::to_string(n));
+				//std::cout << " bits things : " << std::to_string(n)<< std::endl;
+				j=0;
+				n = 0x00;
+			}
+			if(table->readReg(add)==true){
+				n = n>>1;
+				n = n | 0x80;
+			}else{
+				n = n>>1;
+			}
+
+			j++;
 			i += 1;
 			add += 0x1;
+		}
+		if(j>0){
+			reg_vals->push_back(std::to_string(n>>(8-j)));
+			//std::cout << " bits things : " << std::to_string((n>>(8-j)))<< std::endl;
 		}
 	}
 

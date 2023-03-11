@@ -51,10 +51,11 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 
 	uint8_t funCode = msgB->getFuncCode();
 	std::pair<uint, bool> res;
-	std::vector<bool> bits_read;
+	std::vector<std::string> bits_read;
 	std::vector<uint16_t> bytes_read;
-
+	bool coil_val;
 	ModbusError err;
+	ModbusError _table_range_err = ModbusError(Modbus::Error::SUCCESS);
 
 	switch (funCode) {
 	case Modbus::FunctionCode::READ_COIL:
@@ -65,9 +66,10 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		if (!(this->coilsT->addInRange(msgB->getStartAdd()))
 				|| !(this->coilsT->addInRange(
 						msgB->getStartAdd() + msgB->getVal()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 
 		//reading from table
@@ -83,9 +85,10 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		if (!(this->discrtT->addInRange(msgB->getStartAdd()))
 				|| !(this->discrtT->addInRange(
 						msgB->getStartAdd() + msgB->getVal()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 
 		//read from table
@@ -93,6 +96,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->readbits(msgB, &bits_read, false);
 		this->discrt_lock->r_unlock();
 		break;
+
 	case Modbus::FunctionCode::READ_HOLD_REGISTER:
 		std::cout << "READ_HOLD_REGISTER" << std::endl;
 
@@ -101,9 +105,10 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		if (!(this->holdT->addInRange(msgB->getStartAdd()))
 				|| !(this->holdT->addInRange(
 						msgB->getStartAdd() + msgB->getVal()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 
 		//read from table
@@ -111,6 +116,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->readbytes(msgB, &bytes_read, false);
 		this->holdT_lock->r_unlock();
 		break;
+
 	case Modbus::FunctionCode::READ_INPUT_REGISTER:
 		std::cout << "READ_INPUT_REGISTER" << std::endl;
 
@@ -119,46 +125,52 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		if (!(this->regT->addInRange(msgB->getStartAdd()))
 				|| !(this->regT->addInRange(
 						msgB->getStartAdd() + msgB->getVal()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
-
 
 		//read from table
 		this->regT_lock->r_lock();
 		this->readbytes(msgB, &bytes_read, true);
 		this->regT_lock->r_unlock();
 		break;
+
 	case Modbus::FunctionCode::WRITE_COIL:  // 0x05
 
-		std::cout << "Writing coil" << std::endl;
+		std::cout << "WRITE_COIL" << std::endl;
 
 		//checking request
 		err = check_write_coil_req(msgB);
 		if (!(this->coilsT->addInRange(msgB->getStartAdd()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 
 		//writing to table
 		this->coilT_lock->w_lock();
-		this->coilsT->writeToReg(msgB->getStartAdd(), msgB->getVal());
+		coil_val = (msgB->getVal()== 0xFF00)? true : false;
+		this->coilsT->writeToReg(msgB->getStartAdd(), coil_val);
 		this->coilT_lock->w_unlock();
 		break;
+
 	case Modbus::FunctionCode::WRITE_HOLD_REGISTER:  // 0x06
-		std::cout << "Write hold" << std::endl;
+		std::cout << "WRITE_HOLD_REGISTER" << std::endl;
 		err = check_write_hold_req(msgB);
 		if (!(this->holdT->addInRange(msgB->getStartAdd()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 		this->holdT_lock->w_lock();
 		this->holdT->writeToReg(msgB->getStartAdd(), msgB->getVal());
 		this->holdT_lock->w_unlock();
 		break;
+
 	case Modbus::FunctionCode::READ_EXCEPTION_SERIAL:
 		std::cout << "TBD: READ_EXCEPTION_SERIAL" << std::endl;
 		break;
@@ -172,15 +184,17 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		std::cout << "TBD: READ_COMM_LOG_SERIAL" << std::endl;
 		break;
 	case Modbus::FunctionCode::WRITE_MULT_COILS: //0x0F
-		std::cout << "Write Mult Coils" << std::endl;
+		std::cout << "WRITE_MULT_COILS" << std::endl;
+
 		//checking request
 		err = check_multi_coils_req(msgB);
 		if (!(this->coilsT->addInRange(msgB->getStartAdd()))
 				|| !(this->coilsT->addInRange(
 						msgB->getStartAdd() + msgB->getVal()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 
 		//writing to table
@@ -189,6 +203,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->writeBits(msgB, true);
 		this->coilT_lock->w_unlock();
 		break;
+
 	case Modbus::FunctionCode::WRITE_MULT_REGISTERS: //0x10
 		std::cout << "WRITE_MULT_REGISTERS" << std::endl;
 
@@ -197,16 +212,17 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		if (!(this->regT->addInRange(msgB->getStartAdd()))
 				|| !(this->regT->addInRange(
 						msgB->getStartAdd() + (0x10 * msgB->getVal())))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
-
 		//writing to table
 		this->regT_lock->w_lock();
 		this->writeBytes(msgB, true);
 		this->regT_lock->w_unlock();
 		break;
+
 	case Modbus::FunctionCode::REPORT_SERVER_ID_SERIAL:
 		std::cout << "TBD: REPORT_SERVER_ID_SERIAL" << std::endl;
 		break;
@@ -228,9 +244,10 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 						| msgB->getfirstelementofvector()));
 
 		if (!(this->holdT->addInRange(msgB->getStartAdd()))) {
-			err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
+			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
-		if (err != ModbusError(Modbus::Error::SUCCESS))
+		if ((err != ModbusError(Modbus::Error::SUCCESS)
+				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 
 		//writing to table
@@ -238,6 +255,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->holdT->writeToReg(msgB->getStartAdd(), this->maskReg(msgB));
 		this->holdT_lock->w_unlock();
 		break;
+
 	case Modbus::FunctionCode::R_W_MULT_REGISTERS:
 		std::cout << "TBD: R_W_MULT_REGISTERS" << std::endl;
 		break;
@@ -251,8 +269,9 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		//const char* str = (const char*)err;
 
 	}
-
-	return err;
+	if (static_cast<int>(err) > static_cast<int>(_table_range_err))
+		return err;
+	return _table_range_err;
 
 }
 

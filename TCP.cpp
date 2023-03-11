@@ -62,7 +62,7 @@ public:
 			std::cout << "fail to accept connection" << std::endl;
 			exit(EXIT_FAILURE);
 		}
-		std::cout << "before do while" << std::endl;
+		//std::cout << "before do while" << std::endl;
 		ModbusError err;
 		do {
 			valread = read(new_socket, buffer, 1024);

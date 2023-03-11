@@ -96,13 +96,13 @@ public:
 					for (auto &t : v.GetObject()) { // read the ip and port
 						std::string name = t.name.GetString();
 						if (name == "ip") {
-							std::cout << t.name.GetString() << " "
-									<< t.value.GetString() << std::endl;
+//							std::cout << t.name.GetString() << " "
+//									<< t.value.GetString() << std::endl;
 							ip = t.value.GetString();
 
 						} else { // name is port
-							std::cout << t.name.GetString() << " "
-									<< t.value.GetInt() << std::endl;
+//							std::cout << t.name.GetString() << " "
+//									<< t.value.GetInt() << std::endl;
 							port = t.value.GetInt();
 						}
 
