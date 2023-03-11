@@ -8,7 +8,7 @@
 #include "Message.h"
 
 Message::Message(std::string msg) {
-	// TODO: deal with the message
+
 	const char delim = ' ';
 	std::vector<std::string> out;
 	Message::tokenize(msg, delim, out);
@@ -65,7 +65,19 @@ Message::Message(std::string msg) {
 
 
 }
+std::string Message::create_read_response(std::vector<std::string> registers_vals){
+	std::string response_msg;
+	response_msg.append(std::to_string(function_code)+ ' ');
+	response_msg.append(std::to_string(registers_vals.size()) + ' ');
 
+	for(auto& r : registers_vals){
+		response_msg.append(r + ' ');
+	}
+
+	return response_msg;
+
+
+}
 Message::~Message() {
 }
 

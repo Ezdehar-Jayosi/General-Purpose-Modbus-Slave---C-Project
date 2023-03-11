@@ -80,7 +80,7 @@ class SlaveManager {
 			table->writeToReg(add, val_to_write);
 			i += 1;
 			j += 2;
-			add += 0x10;
+			add += 0x1;
 			//std::cout  << +quantity_of_reg << ' ' << +add << std::endl;
 		}
 
@@ -137,13 +137,13 @@ class SlaveManager {
 		}
 	}
 
-	void readbytes(Message *msg, std::vector<uint16_t> *reg_vals, bool tFlag) {
+	void readbytes(Message *msg, std::vector<std::string> *reg_vals, bool tFlag) {
 		uint8_t quantity_of_reg = msg->getVal();
 		int i = 0;
 		uint16_t add = msg->getStartAdd();
 		regTables<uint16_t> *table = (tFlag == true) ? regT : holdT;
 		while (i < (int) quantity_of_reg) {
-			reg_vals->push_back(table->readReg(add));
+			reg_vals->push_back(std::to_string(table->readReg(add)));
 			i += 1;
 			add += 0x1;
 		}
@@ -157,7 +157,7 @@ public:
 	void setCallBackFunc(FunctionCode table_type, CallBack handler,
 			uint16_t regadd);
 
-	ModbusError handleMSG(std::string msg);
+	std::string handleMSG(std::string msg);
 
 	void setTempreture(uint16_t reg,uint16_t tmp);
 

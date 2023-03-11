@@ -41,6 +41,7 @@ public:
 	Message(std::string msg);
 	virtual ~Message();
 
+	std::string create_read_response(std::vector<std::string> registers_vals);
 	uint8_t getFuncCode() {
 		return this->function_code;
 	}

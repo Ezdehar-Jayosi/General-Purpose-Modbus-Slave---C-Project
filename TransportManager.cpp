@@ -12,7 +12,6 @@ using namespace rapidjson;
 
 class TransportManager {
 private:
-	//TCP *tcp; // TODO: change this to a vector of tcps, and add threads to the implementation
 	// give each thread the start function;
 	std::vector<TCP*> tcp_connections;
 	std::vector<std::thread*> connections_threads;

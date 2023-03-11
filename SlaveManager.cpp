@@ -45,15 +45,18 @@ void SlaveManager::setCallBackFunc(FunctionCode table_type, CallBack handler,
 	}
 }
 
-ModbusError SlaveManager::handleMSG(std::string msg) {
+std::string SlaveManager::handleMSG(std::string msg) {
 
 	Message *msgB = new Message(msg);
-
 	uint8_t funCode = msgB->getFuncCode();
-	std::pair<uint, bool> res;
+
 	std::vector<std::string> bits_read;
-	std::vector<uint16_t> bytes_read;
+	std::vector<std::string> bytes_read;
+
 	bool coil_val;
+	std::string response;
+	std::string error;
+
 	ModbusError err;
 	ModbusError _table_range_err = ModbusError(Modbus::Error::SUCCESS);
 
@@ -76,6 +79,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->coilT_lock->r_lock();
 		this->readbits(msgB, &bits_read, true);
 		this->coilT_lock->r_unlock();
+		response = msgB->create_read_response(bits_read);
 		break;
 	case Modbus::FunctionCode::READ_DISCR_INPUT:
 		std::cout << "READ_DISCR_INPUT" << std::endl;
@@ -95,6 +99,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->discrt_lock->r_lock();
 		this->readbits(msgB, &bits_read, false);
 		this->discrt_lock->r_unlock();
+		response = msgB->create_read_response(bits_read);
 		break;
 
 	case Modbus::FunctionCode::READ_HOLD_REGISTER:
@@ -115,6 +120,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->holdT_lock->r_lock();
 		this->readbytes(msgB, &bytes_read, false);
 		this->holdT_lock->r_unlock();
+		response = msgB->create_read_response(bytes_read);
 		break;
 
 	case Modbus::FunctionCode::READ_INPUT_REGISTER:
@@ -135,6 +141,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->regT_lock->r_lock();
 		this->readbytes(msgB, &bytes_read, true);
 		this->regT_lock->r_unlock();
+		response = msgB->create_read_response(bytes_read);
 		break;
 
 	case Modbus::FunctionCode::WRITE_COIL:  // 0x05
@@ -155,6 +162,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		coil_val = (msgB->getVal()== 0xFF00)? true : false;
 		this->coilsT->writeToReg(msgB->getStartAdd(), coil_val);
 		this->coilT_lock->w_unlock();
+		response = msg;
 		break;
 
 	case Modbus::FunctionCode::WRITE_HOLD_REGISTER:  // 0x06
@@ -169,6 +177,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->holdT_lock->w_lock();
 		this->holdT->writeToReg(msgB->getStartAdd(), msgB->getVal());
 		this->holdT_lock->w_unlock();
+		response = msg;
 		break;
 
 	case Modbus::FunctionCode::READ_EXCEPTION_SERIAL:
@@ -202,6 +211,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 //		sleep(30);
 		this->writeBits(msgB, true);
 		this->coilT_lock->w_unlock();
+		response = msg;
 		break;
 
 	case Modbus::FunctionCode::WRITE_MULT_REGISTERS: //0x10
@@ -221,6 +231,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->regT_lock->w_lock();
 		this->writeBytes(msgB, true);
 		this->regT_lock->w_unlock();
+		response= msg;
 		break;
 
 	case Modbus::FunctionCode::REPORT_SERVER_ID_SERIAL:
@@ -254,6 +265,7 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 		this->holdT_lock->w_lock();
 		this->holdT->writeToReg(msgB->getStartAdd(), this->maskReg(msgB));
 		this->holdT_lock->w_unlock();
+		response=msg;
 		break;
 
 	case Modbus::FunctionCode::R_W_MULT_REGISTERS:
@@ -265,13 +277,18 @@ ModbusError SlaveManager::handleMSG(std::string msg) {
 
 	default:
 		err = ModbusError(Modbus::Error::ILLEGAL_FUNCTION);
-		return err;
+		error.append(std::to_string(funCode+0x80) + ' ' + std::to_string(err));
+		return error;
 		//const char* str = (const char*)err;
 
 	}
-	if (static_cast<int>(err) > static_cast<int>(_table_range_err))
-		return err;
-	return _table_range_err;
+	if (static_cast<int>(err) > static_cast<int>(_table_range_err)){
+		error.append(std::to_string(funCode+0x80) + ' ' + std::to_string(err));
+		return error;
+	}
+	if(_table_range_err==ModbusError(Modbus::Error::SUCCESS)) return response;
+	error.append(std::to_string(funCode+0x80) + ' ' + std::to_string(_table_range_err));
+	return error;
 
 }
 

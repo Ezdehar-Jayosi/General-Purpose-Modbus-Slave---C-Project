@@ -63,13 +63,13 @@ public:
 			exit(EXIT_FAILURE);
 		}
 		//std::cout << "before do while" << std::endl;
-		ModbusError err;
+		std::string response;
 		do {
 			valread = read(new_socket, buffer, 1024);
 //			printf("%s\n",buffer);
 			std::string msg_str(buffer);
-			err=this->slave_manager->handleMSG(msg_str);
-			std::cout << (const char*)err << std::endl;
+			response=this->slave_manager->handleMSG(msg_str);
+			std::cout << response << std::endl;
 			//TODO: print error message
 			memset(&buffer[0], 0, sizeof(buffer));
 

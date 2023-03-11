@@ -43,7 +43,7 @@ ModbusError check_write_multiReg_req(Message *msg) {
 			|| (msg->getBytesCount() != byte_c)) {
 		return ModbusError(Modbus::Error::ILLEGAL_DATA_VALUE);
 	} else if ((msg->getStartAdd() < 0x0000 || msg->getStartAdd() > 0xFFFF)
-			|| ((msg->getStartAdd() + (0x10 * msg->getVal())) < 0x0000
+			|| ((msg->getStartAdd() + msg->getVal()) < 0x0000
 					|| (msg->getStartAdd() + (0x10 * msg->getVal())) > 0xFFFF)) {
 		return ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 	}
