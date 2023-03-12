@@ -4,34 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../Logic.cpp \
-../Message.cpp \
-../SlaveManager.cpp \
-../TCP.cpp \
-../TransportManager.cpp \
-../main.cpp \
-../regTables.cpp \
-../rw_lock.cpp 
+../main.cpp 
 
 CPP_DEPS += \
-./Logic.d \
-./Message.d \
-./SlaveManager.d \
-./TCP.d \
-./TransportManager.d \
-./main.d \
-./regTables.d \
-./rw_lock.d 
+./main.d 
 
 OBJS += \
-./Logic.o \
-./Message.o \
-./SlaveManager.o \
-./TCP.o \
-./TransportManager.o \
-./main.o \
-./regTables.o \
-./rw_lock.o 
+./main.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -46,7 +25,7 @@ OBJS += \
 clean: clean--2e-
 
 clean--2e-:
-	-$(RM) ./Logic.d ./Logic.o ./Message.d ./Message.o ./SlaveManager.d ./SlaveManager.o ./TCP.d ./TCP.o ./TransportManager.d ./TransportManager.o ./main.d ./main.o ./regTables.d ./regTables.o ./rw_lock.d ./rw_lock.o
+	-$(RM) ./main.d ./main.o
 
 .PHONY: clean--2e-
 

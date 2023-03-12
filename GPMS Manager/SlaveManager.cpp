@@ -1,7 +1,8 @@
-#include "SlaveManager.h"
+#include "../GPMS Manager/SlaveManager.h"
+#include "../GPMS Manager/handleError.h"
 
-#include "handleError.h"
-#include<unistd.h>
+#include <unistd.h>
+
 SlaveManager::SlaveManager() {
 	this->coilT_lock = new rw_lock();
 	this->discrt_lock = new rw_lock();

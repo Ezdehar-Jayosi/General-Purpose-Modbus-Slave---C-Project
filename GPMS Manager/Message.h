@@ -8,7 +8,7 @@
 #ifndef MESSAGE_H_
 #define MESSAGE_H_
 
-#include "ModbusTypeDefs.h"
+#include "../Utilities/ModbusTypeDefs.h"
 #include <string>
 #include <iostream>
 #include <cstddef>
@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <cassert>
 #include <bitset>
-#include "utilities.h"
+#include "../Utilities/utilities.h"
 class Message {
 	uint8_t uid;
 	uint8_t function_code;

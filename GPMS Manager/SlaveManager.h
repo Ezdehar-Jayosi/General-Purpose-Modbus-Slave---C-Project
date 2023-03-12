@@ -14,11 +14,11 @@
 #include <thread>
 #include <unistd.h>
 
-#include "Message.h"
-#include "ModbusError.h"
+#include "../Utilities/ModbusError.h"
 #include <mutex>
-#include "regTables.cpp"
-#include "rw_lock.cpp"
+#include "../GPMS Manager/Message.h"
+#include "../GPMS Manager/regTables.cpp"
+#include "../GPMS Manager/rw_lock.cpp"
 
 class SlaveManager {
 	// Registers Tables

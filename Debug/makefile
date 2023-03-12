@@ -8,6 +8,9 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include Transport\ Layer/subdir.mk
+-include Logic/subdir.mk
+-include GPMS\ Manager/subdir.mk
 -include subdir.mk
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C++_DEPS)),)

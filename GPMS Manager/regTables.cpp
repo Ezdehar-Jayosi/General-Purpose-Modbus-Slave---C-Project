@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cstddef>
 #include <bitset>
-#include "ModbusTypeDefs.h"
+#include "../Utilities/ModbusTypeDefs.h"
 typedef void (*CallBack)(uint16_t, uint16_t);
 
 template<typename T> class regTables {

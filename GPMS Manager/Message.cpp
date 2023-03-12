@@ -5,7 +5,7 @@
  *      Author: ezdehar
  */
 
-#include "Message.h"
+#include "../GPMS Manager/Message.h"
 
 Message::Message(std::string msg) {
 

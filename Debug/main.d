@@ -1,6 +1,13 @@
-main.o: ../main.cpp ../TransportManager.cpp ../TCP.cpp ../SlaveManager.h \
- ../Message.h ../ModbusTypeDefs.h ../utilities.h ../ModbusError.h \
- ../regTables.cpp ../rw_lock.cpp \
+main.o: ../main.cpp .././Transport\ Layer/TransportManager.cpp \
+ .././Transport\ Layer/TCP.cpp \
+ .././Transport\ Layer/../GPMS\ Manager/SlaveManager.h \
+ .././Transport\ Layer/../GPMS\ Manager/../Utilities/ModbusError.h \
+ .././Transport\ Layer/../GPMS\ Manager/../Utilities/ModbusTypeDefs.h \
+ .././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/Message.h \
+ .././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/../Utilities/ModbusTypeDefs.h \
+ .././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/../Utilities/utilities.h \
+ .././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/regTables.cpp \
+ .././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/rw_lock.cpp \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/writer.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stream.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/rapidjson.h \
@@ -33,16 +40,18 @@ main.o: ../main.cpp ../TransportManager.cpp ../TCP.cpp ../SlaveManager.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/error/error.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/error/../rapidjson.h \
  /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stringbuffer.h \
- ../Logic.cpp
-../TransportManager.cpp:
-../TCP.cpp:
-../SlaveManager.h:
-../Message.h:
-../ModbusTypeDefs.h:
-../utilities.h:
-../ModbusError.h:
-../regTables.cpp:
-../rw_lock.cpp:
+ .././Transport\ Layer/../Utilities/ModbusTypeDefs.h .././Logic/Logic.h \
+ .././Logic/../GPMS\ Manager/SlaveManager.h
+.././Transport\ Layer/TransportManager.cpp:
+.././Transport\ Layer/TCP.cpp:
+.././Transport\ Layer/../GPMS\ Manager/SlaveManager.h:
+.././Transport\ Layer/../GPMS\ Manager/../Utilities/ModbusError.h:
+.././Transport\ Layer/../GPMS\ Manager/../Utilities/ModbusTypeDefs.h:
+.././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/Message.h:
+.././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/../Utilities/ModbusTypeDefs.h:
+.././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/../Utilities/utilities.h:
+.././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/regTables.cpp:
+.././Transport\ Layer/../GPMS\ Manager/../GPMS\ Manager/rw_lock.cpp:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/writer.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stream.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/rapidjson.h:
@@ -75,4 +84,6 @@ main.o: ../main.cpp ../TransportManager.cpp ../TCP.cpp ../SlaveManager.h \
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/error/error.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/error/../rapidjson.h:
 /home/ezdehar/Downloads/rapidjson-master/include/rapidjson/stringbuffer.h:
-../Logic.cpp:
+.././Transport\ Layer/../Utilities/ModbusTypeDefs.h:
+.././Logic/Logic.h:
+.././Logic/../GPMS\ Manager/SlaveManager.h:

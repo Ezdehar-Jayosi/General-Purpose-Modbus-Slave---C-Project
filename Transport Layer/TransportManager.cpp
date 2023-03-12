@@ -7,7 +7,7 @@
 #include <iostream>     // std::streambuf, std::cout
 #include <sstream>
 #include <thread>
-#include "ModbusTypeDefs.h"
+#include "../Utilities/ModbusTypeDefs.h"
 using namespace rapidjson;
 
 class TransportManager {

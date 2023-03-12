@@ -1,6 +1,6 @@
 #include <iostream>
-#include "TransportManager.cpp"
-#include "Logic.cpp"
+#include "./Transport Layer/TransportManager.cpp"
+#include "./Logic/Logic.h"
 int main(int argc, char **argv) {
 	TransportManager *transport = new TransportManager();
 	Logic * my_logic = new Logic();
