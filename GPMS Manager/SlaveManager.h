@@ -21,8 +21,8 @@
 #include "../GPMS Manager/rw_lock.cpp"
 
 class SlaveManager {
+
 	// Registers Tables
-//	static SlaveManager* instance;
 	regTables<uint16_t> *regT;
 	regTables<uint16_t> *holdT;
 	regTables<bool> *coilsT;

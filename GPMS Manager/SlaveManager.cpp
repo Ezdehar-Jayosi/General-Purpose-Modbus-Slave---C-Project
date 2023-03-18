@@ -9,6 +9,9 @@ SlaveManager::SlaveManager() {
 	this->holdT_lock = new rw_lock();
 	this->regT_lock = new rw_lock();
 }
+
+
+//create tables with the ranges from settings.
 void SlaveManager::init(
 		std::unordered_map<FunctionCode, std::vector<uint16_t>> tables_range) {
 	for (auto &trange : tables_range) {
@@ -220,8 +223,8 @@ std::string SlaveManager::handleMSG(std::string msg) {
 
 		//checking request
 		err = check_write_multiReg_req(msgB);
-		if (!(this->regT->addInRange(msgB->getStartAdd()))
-				|| !(this->regT->addInRange(
+		if (!(this->holdT->addInRange(msgB->getStartAdd()))
+				|| !(this->holdT->addInRange(
 						msgB->getStartAdd() + (0x10 * msgB->getVal())))) {
 			_table_range_err = ModbusError(Modbus::Error::ILLEGAL_DATA_ADDRESS);
 		}
@@ -229,9 +232,9 @@ std::string SlaveManager::handleMSG(std::string msg) {
 				|| (_table_range_err != ModbusError(Modbus::Error::SUCCESS))))
 			break;
 		//writing to table
-		this->regT_lock->w_lock();
-		this->writeBytes(msgB, true);
-		this->regT_lock->w_unlock();
+		this->holdT_lock->w_lock();
+		this->writeBytes(msgB, false);
+		this->holdT_lock->w_unlock();
 		response= msg;
 		break;
 

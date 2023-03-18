@@ -22,7 +22,7 @@ public:
 		}
 		return true;
 	}
-	T readReg(uint8_t key) {
+	T readReg(uint16_t key) {
 		//check if key exits in map
 		auto it = this->reg_table.find(key);
 		if (it != reg_table.end()) {
@@ -41,7 +41,7 @@ public:
 //		this->reg_table.insert(std::pair<uint8_t, T>(key, value));
 //		callBackFunction(funCode, key, value);
 //	}
-	void writeToReg(uint8_t key, T value) {
+	void writeToReg(uint16_t key, T value) {
 		//check if key exits in map
 		auto it = this->reg_table.find(key);
 		if (it != reg_table.end()) {

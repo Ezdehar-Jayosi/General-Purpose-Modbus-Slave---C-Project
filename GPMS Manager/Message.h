@@ -19,13 +19,14 @@
 #include <cassert>
 #include <bitset>
 #include "../Utilities/utilities.h"
+
 class Message {
 	uint8_t uid;
 	uint8_t function_code;
 	uint16_t starting_add;
-	uint16_t val;
-	uint8_t byte_count;
-	std::vector<uint8_t> output_val;
+	uint16_t val;  // in write_multi_reg : quantity of reg, in write_signle_reg = val written;
+	uint8_t byte_count; //needed when writing to registers only
+	std::vector<uint8_t> output_val; //values to write to registers
 //	std::vector<uint8_t> bytes_vec;
 
 	static void tokenize(std::string const &str, const char delim,

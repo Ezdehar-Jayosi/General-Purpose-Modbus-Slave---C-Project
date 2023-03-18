@@ -65,10 +65,11 @@ Message::Message(std::string msg) {
 
 
 }
+
 std::string Message::create_read_response(std::vector<std::string> registers_vals){
 	std::string response_msg;
 	response_msg.append(std::to_string(function_code)+ ' ');
-	response_msg.append(std::to_string(registers_vals.size()) + ' ');
+	response_msg.append(std::to_string( registers_vals.size()) + ' ');
 
 	for(auto& r : registers_vals){
 		response_msg.append(r + ' ');

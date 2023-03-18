@@ -15,6 +15,7 @@ private:
 	// give each thread the start function;
 	std::vector<TCP*> tcp_connections;
 	std::vector<std::thread*> connections_threads;
+
 	//table ranges
 	std::vector<uint16_t> holdt_range;
 	std::vector<uint16_t> coilt_range;
@@ -22,11 +23,13 @@ private:
 	std::vector<uint16_t> regt_range;
 	std::unordered_map<FunctionCode, std::vector<uint16_t>> rangeT;
 
+	//this function starts the tcp connections
 	void thread_function(int indx) {
 		std::cout << "connecting tcp number " << indx << std::endl;
 		this->tcp_connections[indx]->connect();
 	}
 
+	//a function that creates threads to run the tcps
 	void create_threads() {
 		int num_of_threads = this->tcp_connections.size();
 		for (int i = 0; i < num_of_threads; i++) {
@@ -61,6 +64,8 @@ public:
 //			Value &s_v = d["connections"];
 			// tables adresses
 
+
+			//Search for tables ranges in settings.conf
 			for (auto &m : d["holdT"].GetArray()) {
 				holdt_range.push_back(m.GetInt());
 			}
@@ -87,7 +92,8 @@ public:
 							FunctionCode::READ_DISCR_INPUT, discrt_range));
 			slave_manager->init(this->getTableRange());
 
-			/////
+
+			////Search for tcp's ip and port in settings.conf
 			for (auto &m : d["connections"].GetObject()) {
 				for (auto &v : m.value.GetArray()) {
 					std::string ip;
@@ -106,6 +112,7 @@ public:
 						}
 
 					}
+
 					//create and add a new tcp connection to vector<tcp>
 					TCP *new_tcp = new TCP(slave_manager, port, ip);
 					new_tcp->init();
@@ -120,6 +127,7 @@ public:
 	void start() {
 		std::cout << "TransportManager start." << std::endl;
 		create_threads();
+		//join the threads
 		for (auto &th : this->connections_threads) {
 			th->join();
 		}
